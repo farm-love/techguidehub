@@ -1,32 +1,43 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Edit Post')
 
-@section('content')
-    <div class="max-w-3xl mx-auto py-8 px-4">
-        <h1 class="text-2xl font-bold mb-4">Edit Post</h1>
+@section('admin-content')
+    <div class="space-y-6">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Edit Post</h1>
+                <p class="text-gray-600 dark:text-gray-300">Update post content and settings</p>
+            </div>
+            <a href="{{ route('admin.posts.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                Back to Posts
+            </a>
+        </div>
+
         <form method="POST" action="{{ route('admin.posts.update', $post) }}">
             @csrf
             @method('PATCH')
-            <div class="mb-3">
-                <label class="block mb-1">Title</label>
-                <input name="title" value="{{ $post->title }}" class="input input-bordered w-full" required />
-            </div>
-            <div class="mb-3">
-                <label class="block mb-1">Slug</label>
-                <input name="slug" value="{{ $post->slug }}" class="input input-bordered w-full" required />
-            </div>
-            <div class="mb-3">
-                <label class="block mb-1">Excerpt</label>
-                <textarea name="excerpt" class="textarea textarea-bordered w-full">{{ $post->excerpt }}</textarea>
-            </div>
-            <div class="mb-3">
-                <label class="block mb-1">Content (HTML)</label>
-                <textarea name="content" class="textarea textarea-bordered w-full" rows="10" required>{{ $post->content }}</textarea>
-            </div>
-            <div class="flex gap-2">
-                <button class="btn btn-primary">Save</button>
-                <a href="{{ route('admin.posts.index') }}" class="btn">Cancel</a>
+            <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 p-6 space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Title</label>
+                    <input name="title" value="{{ $post->title }}" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100" required />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Slug</label>
+                    <input name="slug" value="{{ $post->slug }}" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100" required />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Excerpt</label>
+                    <textarea name="excerpt" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">{{ $post->excerpt }}</textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Content (HTML)</label>
+                    <textarea name="content" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100" rows="10" required>{{ $post->content }}</textarea>
+                </div>
+                <div class="flex gap-2">
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded-md">Save</button>
+                    <a href="{{ route('admin.posts.index') }}" class="px-4 py-2 border rounded-md">Cancel</a>
+                </div>
             </div>
         </form>
     </div>

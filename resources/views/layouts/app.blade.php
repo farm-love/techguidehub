@@ -51,6 +51,24 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    {{-- Fallback for environments where Vite dev server isn't reachable (eg: ngrok tunnel) --}}
+    @php
+        try {
+            $manifestPath = public_path('build/manifest.json');
+        } catch (\Exception $e) {
+            $manifestPath = null;
+        }
+    @endphp
+    @if($manifestPath && file_exists($manifestPath) && !in_array(request()->getHost(), ['127.0.0.1', 'localhost']))
+        @php $manifest = json_decode(file_get_contents($manifestPath), true); @endphp
+        @if(isset($manifest['resources/css/app.css']['file']))
+            <link rel="stylesheet" href="{{ asset('build/'.$manifest['resources/css/app.css']['file']) }}">
+        @endif
+        @if(isset($manifest['resources/js/app.js']['file']))
+            <script type="module" src="{{ asset('build/'.$manifest['resources/js/app.js']['file']) }}"></script>
+        @endif
+    @endif
     
     <!-- Alpine.js -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -133,7 +151,50 @@
             document.addEventListener('DOMContentLoaded', function(){
                 addCopyButtons();
                 addHeadingAnchors();
+                buildTOC();
+                setLazyImages();
             });
+
+            // Build a simple Table of Contents from headings inside #post-content
+            function buildTOC(){
+                try {
+                    var content = document.getElementById('post-content');
+                    var tocList = document.getElementById('toc-list');
+                    if(!content || !tocList) return;
+                    var headings = content.querySelectorAll('h2, h3');
+                    if(!headings.length) return;
+                    var ul = document.createElement('ul');
+                    ul.className = 'space-y-1';
+                    headings.forEach(function(h){
+                        if(!h.id) {
+                            h.id = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                        }
+                        var li = document.createElement('li');
+                        var a = document.createElement('a');
+                        a.href = '#'+h.id;
+                        a.className = (h.tagName.toLowerCase() === 'h2' ? 'font-medium text-sm text-gray-700 dark:text-gray-300' : 'text-sm ms-3 text-gray-600 dark:text-gray-400');
+                        a.innerText = h.textContent.trim();
+                        a.addEventListener('click', function(e){ e.preventDefault(); document.getElementById(h.id).scrollIntoView({behavior:'smooth', block:'start'}); });
+                        li.appendChild(a);
+                        ul.appendChild(li);
+                    });
+                    tocList.appendChild(ul);
+                } catch(e) { /* ignore */ }
+            }
+
+            // Ensure images inside post content are lazy-loaded for performance
+            function setLazyImages(){
+                try {
+                    var content = document.getElementById('post-content');
+                    if(!content) return;
+                    content.querySelectorAll('img').forEach(function(img){
+                        if(!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
+                        // make images responsive
+                        img.classList.add('max-w-full');
+                        img.classList.add('h-auto');
+                    });
+                } catch(e) { /* ignore */ }
+            }
         })();
     </script>
 </body>

@@ -57,17 +57,27 @@
                 @php
                     $searchAction = Route::has('search') ? route('search') : (Route::has('posts.index') ? route('posts.index') : url('/'));
                 @endphp
-                <form action="{{ $searchAction }}" method="GET" role="search" class="hidden md:block me-2">
-                    <label for="q" class="sr-only">Search</label>
-                    <div class="relative">
-                        {{-- compact input + extra right padding so icon sits comfortably inside --}}
-                        <input id="q" name="q" type="search" placeholder="Search tutorials, posts..." value="{{ request('q') }}" class="w-36 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm px-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                        {{-- icon inside input, positioned inward and above other controls --}}
-                        <button type="submit" class="absolute end-3 top-1/2 -translate-y-1/2 z-30 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100" aria-label="Search">
-                            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
-                        </button>
+                {{-- Search modal trigger (replaces inline header search to avoid header collisions) --}}
+                <div x-data="{ showSearch: false }" class="me-2">
+                    <button @click="showSearch = true; $nextTick(() => $refs.modalInput && $refs.modalInput.focus());" aria-haspopup="dialog" aria-expanded="false" type="button" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300">
+                        <span class="sr-only">Open search</span>
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
+                    </button>
+
+                    <!-- Modal -->
+                    <div x-show="showSearch" x-cloak x-trap.noscroll="showSearch" x-on:keydown.escape="showSearch = false" class="fixed inset-0 z-50 flex items-start md:items-center justify-center p-4">
+                        <div class="fixed inset-0 bg-black/40" @click="showSearch = false" aria-hidden="true"></div>
+                        <div class="relative w-full max-w-2xl bg-white dark:bg-gray-800 rounded shadow-lg p-4 z-50">
+                            @php $searchAction = Route::has('search') ? route('search') : (Route::has('posts.index') ? route('posts.index') : url('/')); @endphp
+                            <form action="{{ $searchAction }}" method="GET" role="search" class="flex items-center">
+                                <label for="modal-q" class="sr-only">Search</label>
+                                <input id="modal-q" x-ref="modalInput" name="q" type="search" placeholder="Search tutorials, posts..." value="{{ request('q') }}" class="flex-1 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                <button type="submit" class="ms-3 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md">Search</button>
+                                <button type="button" @click="showSearch = false" class="ms-2 inline-flex items-center px-3 py-2 border rounded-md text-sm">Close</button>
+                            </form>
+                        </div>
                     </div>
-                </form>
+                </div>
 
                 <div class="hidden sm:flex sm:items-center ms-2">
                     <x-dark-toggle />
