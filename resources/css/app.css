@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* daisyUI will apply component styles via Tailwind utilities */
+
+/* Dark mode readability fixes --------------------------------------------------
+	 Ensure text with gray-* classes remains readable when `dark` class is present.
+	 We keep these minimal and explicit to avoid changing too many templates.
+*/
+@layer utilities {
+	.dark .text-gray-900 { color: theme('colors.gray.100') !important; }
+	.dark .text-gray-800 { color: theme('colors.gray.100') !important; }
+	.dark .text-gray-700 { color: theme('colors.gray.200') !important; }
+	.dark .text-gray-600 { color: theme('colors.gray.300') !important; }
+	.dark .text-gray-500 { color: theme('colors.gray.400') !important; }
+	.dark .text-gray-400 { color: theme('colors.gray.500') !important; }
+	.dark .text-gray-300 { color: theme('colors.gray.400') !important; }
+	.dark .text-gray-200 { color: theme('colors.gray.300') !important; }
+	.dark .text-gray-100 { color: theme('colors.gray.200') !important; }
+
+	/* Blue background/text overrides inside prose/content blocks (common in post HTML) */
+	.dark .bg-blue-50 { background-color: theme('colors.blue.900') !important; }
+	.dark .bg-blue-100 { background-color: theme('colors.blue.800') !important; }
+	.dark .text-blue-600 { color: theme('colors.blue.300') !important; }
+	.dark .text-blue-500 { color: theme('colors.blue.300') !important; }
+	.dark .text-blue-400 { color: theme('colors.blue.300') !important; }
+	.dark .prose .bg-blue-50, .dark .prose-invert .bg-blue-50 { background-color: theme('colors.blue.900') !important; }
+	.dark .prose .bg-blue-100, .dark .prose-invert .bg-blue-100 { background-color: theme('colors.blue.800') !important; }
+	.dark .bg-gray-100 { background-color: theme('colors.gray.800') !important; }
+	.dark .bg-gray-50 { background-color: theme('colors.gray.900') !important; }
+
+	/* Make prose (content) readable in dark mode */
+	.dark .prose { color: theme('colors.gray.100') !important; }
+	.dark .prose a { color: theme('colors.blue.400') !important; }
+	.dark .prose h1, .dark .prose h2, .dark .prose h3, .dark .prose h4 { color: theme('colors.gray.50') !important; }
+	.dark .prose p { color: theme('colors.gray.200') !important; }
+	/* Also target prose-invert specifically and common elements inside prose */
+	.dark .prose-invert, .dark .prose-invert p, .dark .prose-invert li, .dark .prose-invert td { color: theme('colors.gray.200') !important; }
+	.dark .prose-invert a { color: theme('colors.blue.400') !important; }
+	.dark .prose-invert h1, .dark .prose-invert h2, .dark .prose-invert h3, .dark .prose-invert h4 { color: theme('colors.gray.50') !important; }
+	.dark .prose-invert blockquote p { color: theme('colors.gray.300') !important; }
+	.dark .prose-invert ul li::marker { color: theme('colors.gray.400') !important; }
+	.dark .prose-invert hr { border-color: theme('colors.gray.700') !important; }
+	.dark .prose-invert code { color: theme('colors.gray.100') !important; background-color: theme('colors.gray.700') !important; }
+}
+
+/* Use components layer to more reliably override typography plugin styles */
+@layer components {
+	.dark .prose, .dark .prose-invert {
+		color: theme('colors.gray.200') !important;
+	}
+	.dark .prose a, .dark .prose-invert a {
+		color: theme('colors.blue.400') !important;
+	}
+	.dark .prose h1, .dark .prose h2, .dark .prose h3, .dark .prose h4,
+	.dark .prose-invert h1, .dark .prose-invert h2, .dark .prose-invert h3, .dark .prose-invert h4 {
+		color: theme('colors.gray.50') !important;
+	}
+	.dark .prose p, .dark .prose-invert p {
+		color: theme('colors.gray.200') !important;
+	}
+	.dark .prose blockquote, .dark .prose-invert blockquote {
+		border-left-color: theme('colors.gray.700') !important;
+		color: theme('colors.gray.300') !important;
+		background-color: transparent !important;
+	}
+	.dark .prose hr, .dark .prose-invert hr {
+		border-color: theme('colors.gray.700') !important;
+	}
+	.dark .prose code, .dark .prose-invert code {
+		color: theme('colors.gray.100') !important;
+		background-color: theme('colors.gray.800') !important;
+		padding: 0.15rem 0.3rem !important;
+		border-radius: 0.25rem !important;
+	}
+	.dark .prose pre, .dark .prose-invert pre {
+		background-color: theme('colors.gray.800') !important;
+		color: theme('colors.gray.100') !important;
+	}
+}
+
+/* PrismJS code block dark-mode tweaks */
+pre[class*="language-"] {
+	border-radius: 0.5rem;
+	padding: 1rem;
+}
+.dark pre[class*="language-"] {
+	background-color: #0f172a; /* slate-900 */
+	color: #e6edf3;
+}
+.dark .token.comment, .dark .token.prolog, .dark .token.doctype, .dark .token.cdata {
+	color: #94a3b8; /* slate-400 */
+}
+.token.operator, .token.entity, .token.url, .language-css .token.string, .style .token.string {
+	color: #c792ea;
+}
+.token.selector, .token.attr-name, .token.string, .token.char, .token.builtin, .token.inserted {
+	color: #7dd3fc; /* sky-300 */
+}
+.token.keyword, .token.function, .token.class-name {
+	color: #60a5fa; /* blue-400 */
+}
+
+/* Ensure form controls are readable in both themes ------------------------------------------------- */
+@layer utilities {
+	input, textarea, select {
+		color: theme('colors.gray.900');
+	}
+	::placeholder { color: theme('colors.gray.500'); }
+	.dark input, .dark textarea, .dark select {
+		color: theme('colors.gray.100') !important;
+	}
+	.dark ::placeholder { color: theme('colors.gray.400') !important; }
+}
+
+/* DaisyUI / component form controls - ensure consistent backgrounds & text */
+@layer components {
+	/* light theme */
+	.input, input[type="text"], input[type="url"], input[type="datetime-local"], textarea, .textarea, select, .select {
+		background-color: theme('colors.white') !important;
+		color: theme('colors.gray.900') !important;
+		border-color: theme('colors.gray.300') !important;
+	}
+
+	/* dark theme overrides */
+	.dark .input, .dark input[type="text"], .dark input[type="url"], .dark input[type="datetime-local"], .dark textarea, .dark .textarea, .dark select, .dark .select {
+		background-color: theme('colors.gray.800') !important;
+		color: theme('colors.gray.100') !important;
+		border-color: theme('colors.gray.700') !important;
+	}
+
+	/* ensure buttons from DaisyUI keep contrast */
+	.btn, .button {
+		color: inherit;
+	}
+}
