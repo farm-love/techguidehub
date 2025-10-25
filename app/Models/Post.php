@@ -60,6 +60,19 @@ class Post extends Model
         return $this->belongsToMany(Tag::class)->withTimestamps();
     }
 
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class)
+            ->where('is_approved', true)
+            ->whereNull('parent_id')
+            ->orderBy('created_at', 'desc');
+    }
+
+    public function allComments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
     public function getRouteKeyName(): string
     {
         return 'slug';

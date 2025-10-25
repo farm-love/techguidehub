@@ -27,19 +27,18 @@ Route::get('/robots.txt', function () {
     return Response::make($content, 200, ['Content-Type' => 'text/plain']);
 });
 
-Route::get('/sitemap.xml', function () {
-    $posts = \App\Models\Post::where('status', 'published')->orderByDesc('updated_at')->get();
-    return response()->view('sitemap', compact('posts'))->header('Content-Type', 'application/xml');
-})->name('sitemap');
-
-// RSS Feed
-Route::get('/feed.xml', function () {
-    $posts = \App\Models\Post::where('status', 'published')->orderByDesc('published_at')->limit(30)->get();
-    return response()->view('rss', compact('posts'))->header('Content-Type', 'application/rss+xml');
-})->name('rss');
+// Sitemap & RSS
+Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
+Route::get('/feed.xml', [\App\Http\Controllers\SitemapController::class, 'rss'])->name('feed');
 
 // Newsletter
 Route::post('/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
+
+// Comments (auth required)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/posts/{post:slug}/comments', [\App\Http\Controllers\CommentController::class, 'store'])->name('comments.store');
+    Route::delete('/comments/{comment}', [\App\Http\Controllers\CommentController::class, 'destroy'])->name('comments.destroy');
+});
 
 // AI Generator (auth required)
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -74,4 +73,5 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::resource('tags', App\Http\Controllers\Admin\TagController::class)->except(['show']);
     Route::resource('users', App\Http\Controllers\Admin\UserController::class)->except(['show']);
     Route::resource('settings', App\Http\Controllers\Admin\SettingController::class)->except(['show', 'create', 'edit']);
+    Route::view('analytics', 'admin.analytics')->name('analytics');
 });

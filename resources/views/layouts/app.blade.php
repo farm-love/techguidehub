@@ -74,6 +74,9 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="h-full bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans antialiased">
+    <!-- Reading Progress Bar -->
+    <x-reading-progress />
+    
     <div class="min-h-full">
         @include('layouts.navigation')
 
